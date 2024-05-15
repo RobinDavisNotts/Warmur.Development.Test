@@ -1,0 +1,98 @@
+﻿@model Warmur.Development.Test.Models.Leads.LeadViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<h1>Sales Lead</h1>
+<div class="d-flex flex-column">
+    <div class="p-2"><b>Name</b>: @Model.Name</div>
+    <div class="p-2"><b>Job Title</b>: @Model.JobTitle</div>
+    <div class="p-2"><b>Company</b>: @Model.Company</div>
+    <div class="p-2"><b>Location</b>: @Model.Location</div>
+</div>
+
+<ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
+    <li class="nav-item" role="presentation">
+        <a
+            data-mdb-tab-init
+            class="nav-link active"
+            id="ex1-tab-1"
+            href="#ex1-tabs-1"
+            role="tab"
+            aria-controls="ex1-tabs-1"
+            aria-selected="true"
+        >Indicators</a
+        >
+    </li>
+    <li class="nav-item" role="presentation">
+        <a
+            data-mdb-tab-init
+            class="nav-link"
+            id="ex1-tab-2"
+            href="#ex1-tabs-2"
+            role="tab"
+            aria-controls="ex1-tabs-2"
+            aria-selected="false"
+        >Some Other Data</a
+        >
+    </li>
+</ul>
+
+<div class="tab-content" id="ex1-content">
+    <div
+        class="tab-pane fade show active"
+        id="ex1-tabs-1"
+        role="tabpanel"
+        aria-labelledby="ex1-tab-1"
+    >
+        <table class="indicators table align-middle mb-0 bg-white">
+            <tbody>
+            @foreach (var indicator in Model.Indicators)
+            {
+                <tr >
+                    <td>@indicator.Name</td>
+                    <td><a href="#" id="value_@indicator.Id">@indicator.Value.Value</a></td>
+                    <td><span class="badge badge-success rounded-pill d-inline">@indicator.Value.Source</span></td>
+                    <td><i class="fas fa-arrow-rotate-right" onclick="restoreValue(@indicator.Id)"></i></td>
+                    <td><i class="fas fa-trash-can"></i></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+    <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
+        Coming Soon...
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', 'a[id^="value_"]', function() {
+                localStorage.setItem(this.id,  this.text);
+                var text = this.text;
+                var input = "<input type='text' id='" + this.id + "' class='form-control' value='" + text + "' onfocusout='restoreLink($(this))' />"
+                $(this).parent().append(input).find('a').remove();
+            });
+        });    
+        
+        function restoreLink(e) {
+            
+            var id = e.attr('id');
+            var text = e.val();
+            var parent = e.parent();
+            e.remove();
+            
+            parent.append("<a href='#' id='" + id + "'>" + text + "</a>");
+        }
+        
+        function restoreValue(id) {
+            var oldValue = localStorage.getItem(id);
+            $(document).find('a[id=value_' + id + ']' ).text(oldValue);
+            localStorage.removeItem(id);
+        }
+    </script>
+}
+
